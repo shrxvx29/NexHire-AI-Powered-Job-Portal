@@ -1,0 +1,22 @@
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
+const connectDB = async () => {
+    try {
+        const mongoURI = process.env.MONGODB_URI;
+        if (!mongoURI) {
+            throw new Error("MONGODB_URI is missing in environment variables");
+        }
+        await mongoose.connect(mongoURI);
+        console.log("MongoDB connected successfully");
+    }
+    catch (error) {
+        const message = error instanceof Error
+            ? error.message
+            : "Unknown database connection error";
+        console.error("MongoDB connection failed:", message);
+        process.exit(1);
+    }
+};
+export default connectDB;
+//# sourceMappingURL=db.js.map
