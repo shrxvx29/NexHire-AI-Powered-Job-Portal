@@ -1,3 +1,4 @@
+
 import express from "express";
 
 import {
@@ -7,7 +8,12 @@ import {
   updateProfile,
 } from "../controllers/authController.js";
 
-import { protect } from "../middleware/authMiddleware.js";
+import {
+  getEmployerProfile,
+  updateEmployerProfile,
+} from "../controllers/employerProfileController.js";
+
+import { protect, employerOnly } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -15,8 +21,23 @@ const router = express.Router();
 router.post("/register", register);
 router.post("/login", login);
 
-// Protected routes
+// Authenticated routes
 router.get("/me", protect, getMe);
 router.patch("/profile", protect, updateProfile);
+
+// Employer-only profile routes
+router.get(
+  "/employer-profile",
+  protect,
+  employerOnly,
+  getEmployerProfile
+);
+
+router.patch(
+  "/employer-profile",
+  protect,
+  employerOnly,
+  updateEmployerProfile
+);
 
 export default router;

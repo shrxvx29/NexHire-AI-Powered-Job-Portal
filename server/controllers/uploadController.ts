@@ -207,3 +207,76 @@ export const uploadProfilePicture = async (
         });
     }
 };
+
+export const uploadCompanyLogo = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    if (!req.file) {
+      res.status(400).json({
+        success: false,
+        message: "Please select a company logo.",
+      });
+      return;
+    }
+
+    const result = await uploadToCloudinary(req.file.buffer, {
+      folder: "nexhire/company-logos",
+      resource_type: "image",
+      transformation: [
+        {
+          width: 600,
+          height: 300,
+          crop: "limit",
+          quality: "auto",
+          fetch_format: "auto",
+        },
+      ],
+    });
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $set: {
+          "companyProfile.logoUrl": result.secure_url,
+        },
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).select("-password");
+
+    if (!updatedUser) {
+      res.status(404).json({
+        success: false,
+        message: "Employer account not found.",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Company logo uploaded successfully.",
+      logoUrl: result.secure_url,
+    });
+  } catch (error: any) {
+  console.error("Company logo upload failed:", {
+    message: error?.message,
+    http_code: error?.http_code,
+    name: error?.name,
+    details: error?.error,
+    response: error?.response?.body,
+  });
+
+  res.status(500).json({
+    success: false,
+    message: "Failed to upload company logo.",
+    error:
+      process.env.NODE_ENV === "development"
+        ? error?.message
+        : undefined,
+  });
+}
+};

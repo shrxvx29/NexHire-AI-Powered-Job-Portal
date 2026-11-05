@@ -3,9 +3,14 @@ import express from "express";
 import {
   uploadResume,
   uploadProfilePicture,
+  uploadCompanyLogo,
 } from "../controllers/uploadController.js";
 
-import { protect } from "../middleware/authMiddleware.js";
+import {
+  protect,
+  employerOnly,
+} from "../middleware/authMiddleware.js";
+
 import upload from "../middleware/uploadMiddleware.js";
 import imageUpload from "../middleware/imageUploadMiddleware.js";
 
@@ -25,6 +30,15 @@ router.post(
   protect,
   imageUpload.single("profilePicture"),
   uploadProfilePicture
+);
+
+// Company logo upload (employers only)
+router.post(
+  "/company-logo",
+  protect,
+  employerOnly,
+  imageUpload.single("companyLogo"),
+  uploadCompanyLogo
 );
 
 export default router;
