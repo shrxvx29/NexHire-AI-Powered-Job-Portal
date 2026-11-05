@@ -1,11 +1,6 @@
-
 import { useState, type FormEvent } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import {
-  AnimatePresence,
-  motion,
-  useReducedMotion,
-} from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -27,6 +22,7 @@ import toast from "react-hot-toast";
 
 import Brand from "../components/Brand";
 import { useAuth } from "../context/AuthContext";
+import DemoCredentials from "../components/auth/DemoCredentials";
 
 type AuthPageProps = {
   mode: "login" | "register";
@@ -188,12 +184,8 @@ export default function AuthPage({ mode }: AuthPageProps) {
 
   const validateForm = () => {
     const nextErrors: FieldErrors = {
-      ...(isRegister && validateName(name)
-        ? { name: validateName(name) }
-        : {}),
-      ...(validateEmail(email)
-        ? { email: validateEmail(email) }
-        : {}),
+      ...(isRegister && validateName(name) ? { name: validateName(name) } : {}),
+      ...(validateEmail(email) ? { email: validateEmail(email) } : {}),
       ...(validatePassword(password)
         ? { password: validatePassword(password) }
         : {}),
@@ -224,15 +216,14 @@ export default function AuthPage({ mode }: AuthPageProps) {
 
       toast.success(isRegister ? "Welcome to NexHire!" : "Welcome back!");
 
-      navigate(
-        account.role === "employer" ? "/employer" : "/dashboard",
-        { replace: true }
-      );
+      navigate(account.role === "employer" ? "/employer" : "/dashboard", {
+        replace: true,
+      });
     } catch (error) {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Something went wrong. Please try again."
+          : "Something went wrong. Please try again.",
       );
     } finally {
       setBusy(false);
@@ -249,11 +240,9 @@ export default function AuthPage({ mode }: AuthPageProps) {
   return (
     <main className="min-h-screen overflow-x-hidden bg-sand">
       <div className="grid min-h-screen lg:grid-cols-[1.05fr_0.95fr]">
-
         {/* LEFT: BRAND EXPERIENCE */}
 
         <section className="relative isolate flex min-h-[420px] flex-col justify-between overflow-hidden bg-wine-dark px-5 py-6 text-sand-light sm:min-h-[480px] sm:px-10 sm:py-8 lg:min-h-screen lg:px-12 xl:px-16">
-
           {/* Decorative background */}
 
           <div
@@ -430,14 +419,11 @@ export default function AuthPage({ mode }: AuthPageProps) {
         {/* RIGHT: AUTHENTICATION */}
 
         <section className="relative flex min-h-screen flex-col bg-sand px-5 py-6 sm:px-10 sm:py-8 lg:px-12 xl:px-16">
-
           {/* Top navigation */}
 
           <div className="flex items-center justify-end gap-2 text-[9px] font-bold text-muted sm:gap-3 sm:text-[10px]">
             <span>
-              {isRegister
-                ? "ALREADY HAVE AN ACCOUNT?"
-                : "NEW TO NEXHIRE?"}
+              {isRegister ? "ALREADY HAVE AN ACCOUNT?" : "NEW TO NEXHIRE?"}
             </span>
 
             <Link
@@ -473,19 +459,13 @@ export default function AuthPage({ mode }: AuthPageProps) {
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={mode}
-                  initial={
-                    shouldReduceMotion ? false : { opacity: 0, y: 10 }
-                  }
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={
-                    shouldReduceMotion ? undefined : { opacity: 0, y: -8 }
-                  }
+                  exit={shouldReduceMotion ? undefined : { opacity: 0, y: -8 }}
                   transition={{ duration: motionDuration }}
                 >
                   <h2 className="mt-3 font-heading text-3xl font-extrabold tracking-[-1.5px] text-wine-dark sm:text-[38px]">
-                    {isRegister
-                      ? "Create your account."
-                      : "Good things await."}
+                    {isRegister ? "Create your account." : "Good things await."}
                   </h2>
 
                   <p className="mt-3 max-w-sm text-xs leading-7 text-muted">
@@ -500,7 +480,6 @@ export default function AuthPage({ mode }: AuthPageProps) {
             {/* Authentication form */}
 
             <form onSubmit={handleSubmit} noValidate className="space-y-5">
-
               {/* Full name */}
 
               <AnimatePresence initial={false}>
@@ -630,7 +609,7 @@ export default function AuthPage({ mode }: AuthPageProps) {
                       if (submitted) {
                         updateError(
                           "password",
-                          validatePassword(event.target.value)
+                          validatePassword(event.target.value),
                         );
                       }
                     }}
@@ -653,16 +632,14 @@ export default function AuthPage({ mode }: AuthPageProps) {
                   <button
                     type="button"
                     onClick={() => setShowPassword((previous) => !previous)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                     aria-pressed={showPassword}
                     disabled={busy}
                     className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-lg text-muted transition-colors hover:bg-wine-soft hover:text-wine focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wine"
                   >
-                    {showPassword ? (
-                      <EyeOff size={17} />
-                    ) : (
-                      <Eye size={17} />
-                    )}
+                    {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                   </button>
                 </div>
 
@@ -694,7 +671,7 @@ export default function AuthPage({ mode }: AuthPageProps) {
                     <div
                       className="grid grid-cols-4 gap-1.5"
                       aria-label={`Password strength: ${getPasswordStrengthLabel(
-                        passwordStrength
+                        passwordStrength,
                       )}`}
                     >
                       {passwordRules.map((rule, index) => (
@@ -828,11 +805,15 @@ export default function AuthPage({ mode }: AuthPageProps) {
               {/* Login security */}
 
               {!isRegister && (
-                <div className="flex items-center justify-between text-[10px] text-muted">
-                  <span className="flex items-center gap-2">
-                    <ShieldCheck size={14} className="text-wine" />
-                    Secure authentication
-                  </span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-[10px] text-muted">
+                    <span className="flex items-center gap-2">
+                      <ShieldCheck size={14} className="text-wine" />
+                      Secure authentication
+                    </span>
+                  </div>
+
+                  <DemoCredentials />
                 </div>
               )}
 
@@ -906,7 +887,8 @@ export default function AuthPage({ mode }: AuthPageProps) {
                 className="font-bold text-wine underline underline-offset-2 transition-colors hover:text-wine-dark"
               >
                 Privacy Policy
-              </Link>.
+              </Link>
+              .
             </p>
           </motion.div>
 
